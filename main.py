@@ -9,7 +9,7 @@ def main(file_path, sizes, batch_size, epochs_count, learning_rate):
     net = Network(sizes=sizes)
 
     net.dataset_testing(test_name="TESTS before SGD:", dataset=dataset)
-    net.SGD(
+    net.sgd(
         dataset=dataset,
         batch_size=batch_size,
         epochs_count=epochs_count,
@@ -21,11 +21,6 @@ def main(file_path, sizes, batch_size, epochs_count, learning_rate):
         defective_percent=DEFECTIVE_PIXELS_COUNT_PERCENT
     )
     net.dataset_testing(test_name="TESTS with noise:", dataset=noisy_dataset)
-    # for i in range(10):
-    #     noisy_dataset = dataset_handler.add_noise(
-    #         defective_percent=DEFECTIVE_PIXELS_COUNT_PERCENT
-    #     )
-    #     net.dataset_testing(test_name="TESTS with noise:", dataset=noisy_dataset)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,5 @@
 import random
 
-import numpy as np
-
 from color import Color
 from functions import *
 
@@ -20,7 +18,7 @@ class Network:
         self.saved_derivatives = []
 
     def dataset_testing(self, test_name, dataset):
-        iter = 1
+        iteration = 1
         color = Color.BOLD
         print(color, test_name, "\n")
         correct_count = 0
@@ -32,16 +30,16 @@ class Network:
             else:
                 color = Color.FAIL
                 result = "❌"
-            print(color, "#", iter, "\t", result)
-            iter += 1
+            print(color, "#", iteration, "\t", result)
+            iteration += 1
         color = Color.ENDC
         print(color, "\n Total:\t", correct_count, " / ", len(dataset), "\n\n")
 
-    def SGD(self, dataset, batch_size, epochs_count, learning_rate):
+    def sgd(self, dataset, batch_size, epochs_count, learning_rate):
         for epoch in range(epochs_count):
             random.shuffle(dataset)
             batches = [
-                dataset[k : k + batch_size] for k in range(0, len(dataset), batch_size)
+                dataset[k:k + batch_size] for k in range(0, len(dataset), batch_size)
             ]
             for batch in batches:
                 for sample in batch:
@@ -57,19 +55,20 @@ class Network:
         activation = input_values
         self.saved_activations.append(activation)
         self.saved_derivatives.append(activation)
+        input_sums = []
         for layer in range(len(self.sizes[1:])):
-            sums = self.weights[layer] @ np.array(activation) + self.biases[layer].T[0]
-            activation = [self.activation_function(sum) for sum in sums]
-            derivative = [self.derivative_function(sum) for sum in sums]
+            input_sums = self.weights[layer] @ np.array(activation) + self.biases[layer].T[0]
+            activation = [self.activation_function(input_sum) for input_sum in input_sums]
+            derivative = [self.derivative_function(input_sum) for input_sum in input_sums]
             for i in range(len(derivative)):
                 derivative[i] = [derivative[i]]
             self.saved_activations.append(activation)
             self.saved_derivatives.append(derivative)
-        return activation, sums
+        return activation, input_sums
 
     def back_propagation(self, input_values, correct_output, learning_rate):
         sum_gradient = np.array(
-            self.get_error(input_values, correct_output, learning_rate)
+            self.get_error(input_values, correct_output)
         ).T
 
         for layer in range(len(self.sizes) - 1, 0, -1):
@@ -93,18 +92,9 @@ class Network:
                 self.biases[layer - 1] - learning_rate * bias_gradient
             )
 
-        error = np.array(self.get_error(input_values, correct_output, learning_rate)).T
+        error = np.array(self.get_error(input_values, correct_output)).T
         return error
 
-    def get_delta_error(self, old, new):
-        return new - old
-
-    def get_error(self, input_values, correct_output, learning_rate):
+    def get_error(self, input_values, correct_output):
         predict = self.forward_pass(input_values)[0]
-        w_sum = 0
-        for layer in range(len(self.sizes) - 1):
-            for i in range(len(self.weights[layer])):
-                for j in range(len(self.weights[layer][i])):
-                    w_sum += self.weights[layer][i][j] ** 2
-        # w_sum /= learning_rate
         return cross_entropy(y=correct_output, p=softmax(predict))

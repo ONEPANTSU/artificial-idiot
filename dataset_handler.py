@@ -7,6 +7,8 @@ import numpy as np
 
 class DatasetHandler:
     def __init__(self, file_path):
+        self.dataset = None
+        self.file_path = None
         self.read_file(file_path=file_path)
 
     def read_file(self, file_path):
@@ -15,11 +17,11 @@ class DatasetHandler:
         with open(self.file_path, newline="") as csvfile:
             data = csv.reader(csvfile, delimiter=" ", quotechar="|")
             answers = np.array([5, 6, 7, 8, 9, 5, 6, 7, 8, 9])
-            iter = 0
+            iteration = 0
             for row in data:
                 input_values = list(map(int, row[0].split(";")[:-1]))
-                self.dataset.append([input_values, answers[iter] - 5])
-                iter += 1
+                self.dataset.append([input_values, answers[iteration] - 5])
+                iteration += 1
 
     def get_dataset(self):
         return self.dataset
