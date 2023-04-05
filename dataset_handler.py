@@ -1,4 +1,5 @@
 import csv
+import itertools
 import math
 import random
 
@@ -35,3 +36,19 @@ class DatasetHandler:
                 pixel_index = random.randint(0, len(data[0]) - 1)
                 data[0][pixel_index] = int(not data[0][pixel_index])
         return self.dataset
+
+    def get_full_dataset(self, defective_percent):
+        full_dataset = []
+        for data in self.dataset:
+
+            defective_pixels_count = math.ceil(len(data[0]) * defective_percent / 100)
+            defective_pixels = itertools.permutations(range(len(data[0])), defective_pixels_count)
+
+            full_dataset.append(data)
+            for pixels in defective_pixels:
+                new_data = data
+                for pixel in pixels:
+                    new_data[0][pixel] = int(not new_data[0][pixel])
+                full_dataset.append(new_data)
+        random.shuffle(full_dataset)
+        return full_dataset
