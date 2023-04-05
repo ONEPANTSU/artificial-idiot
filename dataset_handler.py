@@ -40,9 +40,10 @@ class DatasetHandler:
     def get_full_dataset(self, defective_percent):
         full_dataset = []
         for data in self.dataset:
-
             defective_pixels_count = math.ceil(len(data[0]) * defective_percent / 100)
-            defective_pixels = itertools.permutations(range(len(data[0])), defective_pixels_count)
+            defective_pixels = itertools.permutations(
+                range(len(data[0])), defective_pixels_count
+            )
 
             full_dataset.append(data)
             for pixels in defective_pixels:

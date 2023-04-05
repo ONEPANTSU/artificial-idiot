@@ -39,7 +39,7 @@ class Network:
         for epoch in range(epochs_count):
             random.shuffle(dataset)
             batches = [
-                dataset[k:k + batch_size] for k in range(0, len(dataset), batch_size)
+                dataset[k : k + batch_size] for k in range(0, len(dataset), batch_size)
             ]
             for batch in batches:
                 for sample in batch:
@@ -57,9 +57,15 @@ class Network:
         self.saved_derivatives.append(activation)
         input_sums = []
         for layer in range(len(self.sizes[1:])):
-            input_sums = self.weights[layer] @ np.array(activation) + self.biases[layer].T[0]
-            activation = [self.activation_function(input_sum) for input_sum in input_sums]
-            derivative = [self.derivative_function(input_sum) for input_sum in input_sums]
+            input_sums = (
+                self.weights[layer] @ np.array(activation) + self.biases[layer].T[0]
+            )
+            activation = [
+                self.activation_function(input_sum) for input_sum in input_sums
+            ]
+            derivative = [
+                self.derivative_function(input_sum) for input_sum in input_sums
+            ]
             for i in range(len(derivative)):
                 derivative[i] = [derivative[i]]
             self.saved_activations.append(activation)
@@ -67,9 +73,7 @@ class Network:
         return activation, input_sums
 
     def back_propagation(self, input_values, correct_output, learning_rate):
-        sum_gradient = np.array(
-            self.get_error(input_values, correct_output)
-        ).T
+        sum_gradient = np.array(self.get_error(input_values, correct_output)).T
 
         for layer in range(len(self.sizes) - 1, 0, -1):
             weight_gradient = (
