@@ -1,7 +1,3 @@
-import itertools
-import math
-import random
-
 from config import *
 from dataset_handler import DatasetHandler
 from network import Network
